@@ -2,7 +2,11 @@ package sandipchitale.startspringio;
 
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.ide.util.projectWizard.WizardContext;
+import com.intellij.ide.wizard.CommitStepException;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.ui.jcef.JBCefBrowser;
 import com.intellij.ui.jcef.JBCefClient;
@@ -16,20 +20,25 @@ import org.cef.handler.CefDownloadHandler;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
-import java.nio.file.Path;
 
 public class StartSpringIOModuleWizardStep extends ModuleWizardStep {
 
     private final StartSpringIOModuleBuilder moduleBuilder;
     private final WizardContext context;
     private final Disposable parentDisposable;
-    private String projectName;
-    private Path projectFileDirectory;
+
+    private JLabel progressBarLabel;
+    private JProgressBar progressBar;
+    private boolean downloadCalled;
 
     public StartSpringIOModuleWizardStep(StartSpringIOModuleBuilder moduleBuilder, WizardContext context, Disposable parentDisposable) {
         this.moduleBuilder = moduleBuilder;
         this.context = context;
         this.parentDisposable = parentDisposable;
+    }
+
+    /** Update UI from ModuleBuilder and WizardContext */
+    public void updateStep() {
     }
 
     @Override
@@ -38,11 +47,10 @@ public class StartSpringIOModuleWizardStep extends ModuleWizardStep {
         JPanel progressBarWrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         progressBarWrapper.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JLabel progressBarLabel = new JLabel(" ");
+        progressBarLabel = new JLabel(" ");
         progressBarWrapper.add(progressBarLabel);
 
-        JProgressBar progressBar = new JProgressBar();
-        progressBar.setIndeterminate(false);
+        progressBar = new JProgressBar();
         progressBarWrapper.add(progressBar);
 
         JBCefBrowser browser = new JBCefBrowser("https://start.spring.io");
@@ -55,21 +63,42 @@ public class StartSpringIOModuleWizardStep extends ModuleWizardStep {
         return contentToolWindow;
     }
 
-    private void setProjectName(String projectName) {
-        this.projectName = projectName;
+    @Override
+    public void _init() {
+        _reset();
     }
 
-    private void setProjectFileDirectory(Path projectFileDirectory) {
-        this.projectFileDirectory = projectFileDirectory;
+    public boolean validate() throws ConfigurationException {
+        if (!downloadCalled) {
+            Messages.showMessageDialog(
+                    ProjectManager.getInstance().getDefaultProject(),
+                    "You need to generate the project first! Click on Generate button on the start.spring.io page.",
+                    "Must Generate Project First",
+                    StartSpringIOIcons.StartSpringIO_ICON
+            );
+        }
+        return downloadCalled;
     }
 
     @Override
     public void updateDataModel() {
-        // Does not seem to help
-        // context.setProjectName(projectName);
-        // context.setProjectFileDirectory(projectFileDirectory, true);
+        _reset();
     }
 
+    @Override
+    public void _commit(boolean finishChosen) throws CommitStepException {
+    }
+
+    private void _reset() {
+        setDownloadCalled(false);
+        progressBar.setIndeterminate(false);
+        progressBarLabel.setText("Configure project and then click Generate to download project.");
+    }
+
+    private void setDownloadCalled(boolean downloadCalled) {
+        this.downloadCalled = downloadCalled;
+    }
+    
     private record DownloadHandler(StartSpringIOModuleWizardStep startSpringIOModuleWizardStep,
                                    WizardContext context,
                                    JComponent parent,
@@ -87,13 +116,11 @@ public class StartSpringIOModuleWizardStep extends ModuleWizardStep {
         @Override
         public void onDownloadUpdated(CefBrowser browser, CefDownloadItem downloadItem, CefDownloadItemCallback callback) {
             if (downloadItem.isComplete()) {
+                startSpringIOModuleWizardStep.setDownloadCalled(true);
                 String downloadItemLocation = downloadItem.getFullPath();
                 String suggestedFileName = downloadItem.getSuggestedFileName();
                 String suggestedFileNameSansExtension = suggestedFileName.replaceFirst("\\.zip", "");
                 context.putUserData(StartSpringIOModuleBuilder.START_SPRING_IO_DOWNLOADED_ZIP_LOCATION, downloadItemLocation);
-                startSpringIOModuleWizardStep.setProjectName(suggestedFileNameSansExtension);
-                String projectFileDirectory = context.getProjectFileDirectory();
-                startSpringIOModuleWizardStep.setProjectFileDirectory(Path.of(projectFileDirectory, suggestedFileNameSansExtension));
                 parent.getToolkit().getSystemClipboard().setContents(new StringSelection(suggestedFileNameSansExtension), EmptyClipboardOwner.INSTANCE);
                 parent.setCursor(Cursor.getDefaultCursor());
                 progressBar.setIndeterminate(false);

@@ -7,7 +7,7 @@ import javax.swing.*;
 
 public class StartSpringIOModuleType extends ModuleType<StartSpringIOModuleBuilder> {
 
-    private static final String ID = "DEMO_MODULE_TYPE";
+    private static final String ID = "START_SPRING_IO_MODULE_TYPE";
 
     private static final StartSpringIOModuleType INSTANCE = new StartSpringIOModuleType();
 

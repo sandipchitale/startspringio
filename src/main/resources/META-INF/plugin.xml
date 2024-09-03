@@ -27,7 +27,7 @@
     <extensions defaultExtensionNs="com.intellij">
         <moduleBuilder
                 builderClass="sandipchitale.startspringio.StartSpringIOModuleBuilder"
-                id="START_SPRING_IO_STEP"
+                id="START_SPRING_IO_MODULE_BUILDER"
                 order="first"/>
     </extensions>
 </idea-plugin>
