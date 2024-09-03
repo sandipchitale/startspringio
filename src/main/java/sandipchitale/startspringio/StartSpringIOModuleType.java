@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class StartSpringIOModuleType extends ModuleType<StartSpringModuleBuilder> {
+public class StartSpringIOModuleType extends ModuleType<StartSpringIOModuleBuilder> {
 
     private static final String ID = "DEMO_MODULE_TYPE";
 
@@ -21,8 +21,8 @@ public class StartSpringIOModuleType extends ModuleType<StartSpringModuleBuilder
 
     @NotNull
     @Override
-    public StartSpringModuleBuilder createModuleBuilder() {
-        return new StartSpringModuleBuilder();
+    public StartSpringIOModuleBuilder createModuleBuilder() {
+        return new StartSpringIOModuleBuilder();
     }
 
     @NotNull

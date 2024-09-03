@@ -20,13 +20,13 @@ import java.nio.file.Path;
 
 public class StartSpringIOModuleWizardStep extends ModuleWizardStep {
 
-    private final StartSpringModuleBuilder moduleBuilder;
+    private final StartSpringIOModuleBuilder moduleBuilder;
     private final WizardContext context;
     private final Disposable parentDisposable;
     private String projectName;
     private Path projectFileDirectory;
 
-    public StartSpringIOModuleWizardStep(StartSpringModuleBuilder moduleBuilder, WizardContext context, Disposable parentDisposable) {
+    public StartSpringIOModuleWizardStep(StartSpringIOModuleBuilder moduleBuilder, WizardContext context, Disposable parentDisposable) {
         this.moduleBuilder = moduleBuilder;
         this.context = context;
         this.parentDisposable = parentDisposable;
@@ -90,7 +90,7 @@ public class StartSpringIOModuleWizardStep extends ModuleWizardStep {
                 String downloadItemLocation = downloadItem.getFullPath();
                 String suggestedFileName = downloadItem.getSuggestedFileName();
                 String suggestedFileNameSansExtension = suggestedFileName.replaceFirst("\\.zip", "");
-                context.putUserData(StartSpringModuleBuilder.START_SPRING_IO_DOWNLOADED_ZIP_LOCATION, downloadItemLocation);
+                context.putUserData(StartSpringIOModuleBuilder.START_SPRING_IO_DOWNLOADED_ZIP_LOCATION, downloadItemLocation);
                 startSpringIOModuleWizardStep.setProjectName(suggestedFileNameSansExtension);
                 String projectFileDirectory = context.getProjectFileDirectory();
                 startSpringIOModuleWizardStep.setProjectFileDirectory(Path.of(projectFileDirectory, suggestedFileNameSansExtension));

@@ -25,16 +25,15 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
-public class StartSpringModuleBuilder extends ModuleBuilder {
+public class StartSpringIOModuleBuilder extends ModuleBuilder {
     static final Key<String> START_SPRING_IO_DOWNLOADED_ZIP_LOCATION = Key.create("start.spring.io.downloaded.zip.path");
 
     private @NotNull ModifiableRootModel model;
 
     private WizardContext context;
 
-    public StartSpringModuleBuilder() {
+    public StartSpringIOModuleBuilder() {
     }
 
     @Override
@@ -42,14 +41,8 @@ public class StartSpringModuleBuilder extends ModuleBuilder {
         this.model = model;
     }
 
-
     @Override
-    public @NotNull List<Class<? extends ModuleWizardStep>> getIgnoredSteps() {
-        return super.getIgnoredSteps();
-    }
-
-    @Override
-    public ModuleType<StartSpringModuleBuilder> getModuleType() {
+    public ModuleType<StartSpringIOModuleBuilder> getModuleType() {
         return StartSpringIOModuleType.getInstance();
     }
 
