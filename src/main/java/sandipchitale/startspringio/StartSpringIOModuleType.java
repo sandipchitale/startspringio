@@ -42,5 +42,4 @@ public class StartSpringIOModuleType extends ModuleType<StartSpringModuleBuilder
     public Icon getNodeIcon(@Deprecated boolean b) {
         return StartSpringIOIcons.StartSpringIO_ICON;
     }
-
 }

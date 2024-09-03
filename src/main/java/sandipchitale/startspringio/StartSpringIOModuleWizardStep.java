@@ -2,7 +2,6 @@ package sandipchitale.startspringio;
 
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.ide.util.projectWizard.WizardContext;
-import com.intellij.ide.wizard.CommitStepException;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.ui.jcef.JBCefBrowser;

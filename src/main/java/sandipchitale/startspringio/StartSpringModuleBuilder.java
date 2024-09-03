@@ -1,12 +1,13 @@
 package sandipchitale.startspringio;
 
-import com.intellij.ide.util.projectWizard.*;
+import com.intellij.ide.util.projectWizard.ModuleBuilder;
+import com.intellij.ide.util.projectWizard.ModuleWizardStep;
+import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.util.Key;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
@@ -24,6 +25,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 public class StartSpringModuleBuilder extends ModuleBuilder {
     static final Key<String> START_SPRING_IO_DOWNLOADED_ZIP_LOCATION = Key.create("start.spring.io.downloaded.zip.path");
@@ -40,9 +42,10 @@ public class StartSpringModuleBuilder extends ModuleBuilder {
         this.model = model;
     }
 
+
     @Override
-    public @Nullable ModuleWizardStep modifySettingsStep(@NotNull SettingsStep settingsStep) {
-        return modifyStep(settingsStep);
+    public @NotNull List<Class<? extends ModuleWizardStep>> getIgnoredSteps() {
+        return super.getIgnoredSteps();
     }
 
     @Override
