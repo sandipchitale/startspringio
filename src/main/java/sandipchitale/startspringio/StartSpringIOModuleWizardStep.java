@@ -27,8 +27,11 @@ public class StartSpringIOModuleWizardStep extends ModuleWizardStep {
     private final WizardContext context;
     private final Disposable parentDisposable;
 
+    private SimpleToolWindowPanel contentToolWindow;
+
     private JLabel progressBarLabel;
     private JProgressBar progressBar;
+
     private boolean downloadCalled;
 
     public StartSpringIOModuleWizardStep(StartSpringIOModuleBuilder moduleBuilder, WizardContext context, Disposable parentDisposable) {
@@ -43,7 +46,7 @@ public class StartSpringIOModuleWizardStep extends ModuleWizardStep {
 
     @Override
     public JComponent getComponent() {
-        SimpleToolWindowPanel contentToolWindow = new SimpleToolWindowPanel(true, true);
+        contentToolWindow = new SimpleToolWindowPanel(true, true);
         JPanel progressBarWrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         progressBarWrapper.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -70,12 +73,9 @@ public class StartSpringIOModuleWizardStep extends ModuleWizardStep {
 
     public boolean validate() throws ConfigurationException {
         if (!downloadCalled) {
-            Messages.showMessageDialog(
-                    ProjectManager.getInstance().getDefaultProject(),
+            Messages.showWarningDialog(contentToolWindow,
                     "You need to generate the project first! Click on Generate button on the start.spring.io page.",
-                    "Must Generate Project First",
-                    StartSpringIOIcons.StartSpringIO_ICON
-            );
+                    "Must Generate Project First");
         }
         return downloadCalled;
     }
