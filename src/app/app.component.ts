@@ -1,19 +1,21 @@
-import {AfterViewInit, Component, inject, NO_ERRORS_SCHEMA} from '@angular/core';
+import {ipcRenderer} from "electron";
+import {AfterViewInit, ChangeDetectorRef, Component, inject, NO_ERRORS_SCHEMA} from '@angular/core';
+import {DOCUMENT} from "@angular/common";
 import {FormsModule} from '@angular/forms';
 import {ElectronService} from './core/services';
 import {TranslateService} from '@ngx-translate/core';
 import {APP_CONFIG} from '../environments/environment';
 
 import {ButtonModule} from 'primeng/button';
+import {InputTextModule} from 'primeng/inputtext';
 import {TabsModule} from 'primeng/tabs';
 import {ToggleButtonModule} from 'primeng/togglebutton';
 import {ToolbarModule} from 'primeng/toolbar';
-import {DOCUMENT} from "@angular/common";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [FormsModule, ButtonModule, TabsModule, ToggleButtonModule, ToolbarModule],
+  imports: [FormsModule, ButtonModule, InputTextModule, TabsModule, ToggleButtonModule, ToolbarModule],
   providers: [ElectronService, TranslateService],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
@@ -22,12 +24,14 @@ import {DOCUMENT} from "@angular/common";
 export class AppComponent implements AfterViewInit {
   private readonly document = inject(DOCUMENT);
 
-
   _darkTheme = false;
+
+  downloadedProjectPath: string | null = null;
 
   constructor(
     private electronService: ElectronService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
     this.translate.setDefaultLang('en');
     console.log('APP_CONFIG', APP_CONFIG);
@@ -40,6 +44,21 @@ export class AppComponent implements AfterViewInit {
     } else {
       console.log('Run in browser');
     }
+
+    ipcRenderer.on('message-from-main', (evt, message) => {
+      try {
+        switch (message.type) {
+          case 'start-spring-io-project-started':
+            this.downloadedProjectPath = '';
+            break;
+          case 'start-spring-io-project':
+            this.downloadedProjectPath = message.projectPath;
+            break;
+        }
+      } finally {
+        this.changeDetectorRef.detectChanges();
+      }
+    });
   }
 
   get darkTheme(): boolean {
