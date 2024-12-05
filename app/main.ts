@@ -29,28 +29,28 @@ function createWindow(): BrowserWindow {
   session.fromPartition('start-spring-io').setDownloadPath('/tmp/start-spring-io');
 
   // https://start.spring.io/starter.zip?type=gradle-project&language=java&bootVersion=3.4.0&baseDir=demo&groupId=com.example&artifactId=demo&name=demo&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.demo&packaging=jar&javaVersion=17
-  session.fromPartition('start-spring-io').webRequest.onBeforeRequest({urls: ['*://*/*']}, (details: any, callback: any) => {
-    if (details.url.startsWith('https://start.spring.io/starter.zip')) {
-      console.dir(details);
-      console.log(details.url);
-    }
-    callback({cancel: false});
-  });
+  // session.fromPartition('start-spring-io').webRequest.onBeforeRequest({urls: ['*://*/*']}, (details: any, callback: any) => {
+  //   if (details.url.startsWith('https://start.spring.io/starter.zip')) {
+  //   }
+  //   callback({cancel: false});
+  // });
 
+  let downloadUrl: string | null = null;
   session.fromPartition('start-spring-io').webRequest.onCompleted({urls: ['*://*/*']}, (details: any) => {
     if (details.url.startsWith('https://start.spring.io/starter.zip')) {
-      console.dir(details.responseHeaders['content-disposition']);
+      downloadUrl = details.url;
     }
   });
 
   session.fromPartition('start-spring-io').on('will-download', (event, item, webContents) => {
-    console.dir(item);
     item.once('done', (event, state) => {
       if (state === 'completed') {
-        console.log(`File saved in ${item.getSavePath()}`);
-      } else {
-        console.log(`Download failed: ${state}`)
+        console.log(`Download url: ${downloadUrl}`);
+        console.log(`Download completed: ${item.getSavePath()}`);
+      } else if (state === 'cancelled') {
+        console.log(`Download cancelled.`);
       }
+      downloadUrl = null;
     })
   })
 
