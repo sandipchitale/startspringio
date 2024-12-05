@@ -6,7 +6,11 @@
     </ng-template>
     <ng-template #center>
       <input readonly type="text" pInputText [(ngModel)]="downloadedProjectPath" class="no-drag mr-2 grow"/>
-      <button pButton class="no-drag ml-auto mr-2" severity="secondary" title="GitHub"><i class="pi pi-folder-open"></i>
+      <button pButton (click)="openProjectInIntelliJ()" class="no-drag ml-auto mr-2" severity="secondary" title="GitHub">
+        <img src="assets/icons/intellij.png" width="16"/>
+      </button>
+      <button pButton (click)="openProjectInVSCode()" class="no-drag ml-auto mr-2" severity="secondary" title="GitHub">
+        <img src="assets/icons/vscode.png" width="16"/>
       </button>
     </ng-template>
     <ng-template #end>

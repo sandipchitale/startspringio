@@ -1,4 +1,7 @@
 import {ipcRenderer} from "electron";
+import * as path from 'path';
+import * as extract from 'extract-zip';
+import {exec} from 'child_process';
 import {AfterViewInit, ChangeDetectorRef, Component, inject, NO_ERRORS_SCHEMA} from '@angular/core';
 import {DOCUMENT} from "@angular/common";
 import {FormsModule} from '@angular/forms';
@@ -11,6 +14,7 @@ import {InputTextModule} from 'primeng/inputtext';
 import {TabsModule} from 'primeng/tabs';
 import {ToggleButtonModule} from 'primeng/togglebutton';
 import {ToolbarModule} from 'primeng/toolbar';
+import {ExecException} from "node:child_process";
 
 @Component({
   selector: 'app-root',
@@ -84,12 +88,38 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
-  async startDotSpringDotIo() {
-    await this.electronService.shell.openExternal('https://start.spring.io/');
+  async openProjectInIntelliJ() {
+    await this.openProject('/home/sandipchitale/.local/share/JetBrains/Toolbox/scripts/idea');
+  }
+
+  async openProjectInVSCode() {
+    await this.openProject('code');
+  }
+
+  async openProject(tool: string) {
+    if (this.downloadedProjectPath) {
+      const dir = path.dirname(this.downloadedProjectPath);
+      const basename = path.basename(this.downloadedProjectPath);
+      const ext = path.extname(this.downloadedProjectPath);
+      const projectDir = path.join(dir, basename.substring(0, basename.length - ext.length));
+      try {
+        await extract(this.downloadedProjectPath, {dir: dir});
+        // await shell.openPath(projectDir);
+        exec(`"${tool}" "${projectDir}"`, (error) => {
+          console.error(error);
+        });
+      } catch(e) {
+        console.error(e)
+      }
+    }
   }
 
   async gitHub() {
     await this.electronService.shell.openExternal('https://github.com/sandipchitale/startspringio/');
+  }
+
+  async startDotSpringDotIo() {
+    await this.electronService.shell.openExternal('https://start.spring.io/');
   }
 
   quit() {
