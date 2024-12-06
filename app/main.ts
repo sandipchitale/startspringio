@@ -1,4 +1,4 @@
-import {app, BrowserWindow, screen, session} from 'electron';
+import {app, BrowserWindow, dialog, ipcMain, OpenDialogOptions, screen, session} from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -24,6 +24,16 @@ function createWindow(): BrowserWindow {
       contextIsolation: false,
       webviewTag: true,
     },
+  });
+
+  ipcMain.on('select-project-parent-dir', async (event, openDialogOptions: OpenDialogOptions) =>{
+    if (win) {
+      try {
+        win?.webContents.send('project-parent-dir', await dialog.showOpenDialog(win, openDialogOptions));
+      } catch (e) {
+        console.error(e);
+      }
+    }
   });
 
   session.fromPartition('start-spring-io').setDownloadPath('/tmp/start-spring-io');

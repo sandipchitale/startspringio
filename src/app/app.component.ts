@@ -1,4 +1,4 @@
-import {ipcRenderer, shell} from "electron";
+import {ipcRenderer, OpenDialogReturnValue, shell} from "electron";
 import * as path from 'path';
 import {exec} from 'child_process';
 import * as extract from 'extract-zip';
@@ -49,7 +49,7 @@ export class AppComponent implements AfterViewInit {
       console.log('Run in browser');
     }
 
-    ipcRenderer.on('message-from-main', (evt, message) => {
+    ipcRenderer.on('message-from-main', (_, message) => {
       try {
         switch (message.type) {
           case 'start-spring-io-project-started':
@@ -95,50 +95,56 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
-  async openProjectInIntelliJ() {
+  openProjectInIntelliJ() {
     if (this.downloadedProjectPath) {
       let intellijPath = 'idea';
       if (os.platform() === 'linux') {
         intellijPath = `${os.homedir()}/.local/share/JetBrains/Toolbox/scripts/idea`
       }
-      await this.openProject(intellijPath);
+      this.openProject(intellijPath);
     }
   }
 
-  async openProjectInVSCode() {
+  openProjectInVSCode() {
     if (this.downloadedProjectPath) {
       let vscodePath = 'code';
       if (os.platform() === 'linux') {
         vscodePath = `/usr/bin/code`
       }
-      await this.openProject(vscodePath);
+      this.openProject(vscodePath);
     }
   }
 
-  async openProject(tool: string) {
+  openProject(tool: string) {
     if (this.downloadedProjectPath) {
-      const dir = path.dirname(this.downloadedProjectPath);
       const basename = path.basename(this.downloadedProjectPath);
       const ext = path.extname(this.downloadedProjectPath);
-      const projectDir = path.join(dir, basename.substring(0, basename.length - ext.length));
-      try {
-        await extract(this.downloadedProjectPath, {dir: dir});
-        // await shell.openPath(projectDir);
-        exec(`"${tool}" "${projectDir}"`, (error) => {
-          console.error(error);
-        });
-      } catch (e) {
-        console.error(e)
-      }
+      const projectName = basename.substring(0, basename.length - ext.length);
+      ipcRenderer.send('select-project-parent-dir', {
+        title: 'Open parent directory for Project',
+        defaultPath: `${path.join(os.homedir(), 'IdeaProjects')}`,
+        properties: ['openDirectory'],
+      });
+      ipcRenderer.on('project-parent-dir', (_, openDialogReturnValue: OpenDialogReturnValue) => {
+        (async () => {
+          if (!openDialogReturnValue.canceled) {
+            const projectParentDir = openDialogReturnValue.filePaths[0];
+            await extract(this.downloadedProjectPath!, {dir: projectParentDir});
+            exec(`"${tool}" "${path.join(projectParentDir, projectName)}"`, (error) => {
+              console.error(error);
+            });
+          }
+        })();
+      });
     }
   }
 
   async gitHub() {
-    await this.electronService.shell.openExternal('https://github.com/sandipchitale/startspringio/');
+    await shell.openExternal('https://github.com/sandipchitale/startspringio/');
   }
 
   async startDotSpringDotIo() {
-    await this.electronService.shell.openExternal('https://start.spring.io/');
+    await shell.openExternal('https://start.spring.io/');
   }
 
   quit() {
