@@ -70,12 +70,15 @@ export class AppComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     // initial theme to match system theme
+    const webView = this.document.getElementById('start-spring-io') as any;
     if (window.matchMedia('(prefers-color-scheme: light)').matches) {
       this.document.querySelector('html')?.classList.remove('dark-theme');
       this.darkTheme = false;
+      webView.executeJavaScript(`document.body.classList.remove('dark'); document.body.classList.add('light');`);
     } else {
       this.document.querySelector('html')?.classList.add('dark-theme');
       this.darkTheme = true;
+      webView.executeJavaScript(`document.body.classList.remove('dark'); document.body.classList.add('light');`);
     }
   }
 
@@ -85,10 +88,13 @@ export class AppComponent implements AfterViewInit {
 
   set darkTheme(value: boolean) {
     this._darkTheme = value;
+    const webView = this.document.getElementById('start-spring-io') as any;
     if (this._darkTheme) {
       this.document.querySelector('html')?.classList.add('dark-theme');
+      webView.executeJavaScript(`document.body.classList.add('dark'); document.body.classList.remove('light');`);
     } else {
       this.document.querySelector('html')?.classList.remove('dark-theme');
+      webView.executeJavaScript(`document.body.classList.remove('dark'); document.body.classList.add('light');`);
     }
   }
 
