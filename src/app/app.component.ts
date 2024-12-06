@@ -2,6 +2,7 @@ import {ipcRenderer, OpenDialogReturnValue, shell} from "electron";
 import * as path from 'path';
 import {exec} from 'child_process';
 import * as extract from 'extract-zip';
+import * as fs from 'fs';
 import * as os from 'os';
 import {AfterViewInit, ChangeDetectorRef, Component, inject, NO_ERRORS_SCHEMA} from '@angular/core';
 import {DOCUMENT} from "@angular/common";
@@ -130,7 +131,22 @@ export class AppComponent implements AfterViewInit {
     if (this.projectPath) {
       let intellijPath = 'idea';
       if (os.platform() === 'linux') {
-        intellijPath = `${os.homedir()}/.local/share/JetBrains/Toolbox/scripts/idea`
+        const tryIntellijPath = `${os.homedir()}/.local/share/JetBrains/Toolbox/scripts/idea`;
+        if (fs.existsSync(tryIntellijPath)) {
+          intellijPath = tryIntellijPath;
+        }
+      } else if (os.platform() === 'win32') {
+        // Prefer IntelliJ IDEA Ultimate
+        let tryIntellijPath = `${os.homedir()}\\AppData\\Local\\Programs\\IntelliJ IDEA Ultimate\\bin\\idea.bat`;
+        if (fs.existsSync(tryIntellijPath)) {
+          intellijPath = tryIntellijPath;
+        } else {
+          // Try IntelliJ IDEA Community
+          tryIntellijPath = `${os.homedir()}\\AppData\\Local\\JetBrains\\Toolbox\\scripts\\idea.cmd`;
+          if (fs.existsSync(tryIntellijPath)) {
+            intellijPath = tryIntellijPath;
+          }
+        }
       }
       this.openProject(intellijPath);
     }
@@ -140,7 +156,15 @@ export class AppComponent implements AfterViewInit {
     if (this.projectPath) {
       let vscodePath = 'code';
       if (os.platform() === 'linux') {
-        vscodePath = `/usr/bin/code`
+        const tryVscodePath = '/usr/bin/code';
+        if (fs.existsSync(tryVscodePath)) {
+          vscodePath = tryVscodePath;
+        }
+      } else if (os.platform() === 'win32') {
+        const tryVscodePath = `\\Program Files\\Microsoft VS Code\\bin\\code.cmd`;
+        if (fs.existsSync(tryVscodePath)) {
+          vscodePath = tryVscodePath;
+        }
       }
       this.openProject(vscodePath);
     }
@@ -149,7 +173,9 @@ export class AppComponent implements AfterViewInit {
   openProject(tool: string) {
     if (this.projectPath) {
       exec(`"${tool}" "${this.projectPath}"`, (error) => {
-        console.error(error);
+        if (error) {
+          console.error(error);
+        }
       });
     }
   }

@@ -38,7 +38,7 @@
         <i class="pi pi-folder-open"></i>
       </button>
       <div class="mr-2 font-bold">Project dir:</div>
-      <input readonly type="text" pInputText [(ngModel)]="projectPath" class="no-drag mr-2 grow"/>
+      <input type="text" pInputText [(ngModel)]="projectPath" class="no-drag mr-2 grow"/>
       <button pButton [disabled]="!projectPath" (click)="openProjectLocation()" class="no-drag mr-2" severity="secondary" title="Open Project Location">
         <i class="pi pi-folder-open"></i>
       </button>
