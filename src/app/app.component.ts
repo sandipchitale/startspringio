@@ -147,6 +147,11 @@ export class AppComponent implements AfterViewInit {
             intellijPath = tryIntellijPath;
           }
         }
+      } else if (os.platform() === 'darwin') {
+        const tryIntellijPath = `${os.homedir()}/Library/Application Support/JetBrains/Toolbox/scripts/idea`;
+        if (fs.existsSync(tryIntellijPath)) {
+          intellijPath = tryIntellijPath;
+        }
       }
       this.openProject(intellijPath);
     }
@@ -162,6 +167,11 @@ export class AppComponent implements AfterViewInit {
         }
       } else if (os.platform() === 'win32') {
         const tryVscodePath = `\\Program Files\\Microsoft VS Code\\bin\\code.cmd`;
+        if (fs.existsSync(tryVscodePath)) {
+          vscodePath = tryVscodePath;
+        }
+      } else if (os.platform() === 'darwin') {
+        const tryVscodePath = '/usr/local/bin/code';
         if (fs.existsSync(tryVscodePath)) {
           vscodePath = tryVscodePath;
         }
