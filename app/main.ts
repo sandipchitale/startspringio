@@ -1,6 +1,7 @@
 import {app, BrowserWindow, dialog, ipcMain, OpenDialogOptions, screen, session} from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as os from 'os';
 
 let win: BrowserWindow | null = null;
 const args = process.argv.slice(1),
@@ -36,7 +37,7 @@ function createWindow(): BrowserWindow {
     }
   });
 
-  session.fromPartition('start-spring-io').setDownloadPath('/tmp/start-spring-io');
+  session.fromPartition('start-spring-io').setDownloadPath(`${os.tmpdir()}`);
 
   // https://start.spring.io/starter.zip?type=gradle-project&language=java&bootVersion=3.4.0&baseDir=demo&groupId=com.example&artifactId=demo&name=demo&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.demo&packaging=jar&javaVersion=17
   session.fromPartition('start-spring-io').webRequest.onBeforeRequest({urls: ['*://*/*']}, (details: any, callback: any) => {
