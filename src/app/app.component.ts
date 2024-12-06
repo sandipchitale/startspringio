@@ -30,7 +30,8 @@ export class AppComponent implements AfterViewInit {
 
   _darkTheme = false;
 
-  downloadedProjectPath: string | null = null;
+  downloadedZipPath: string | null = null;
+  projectPath: string | null = null;
 
   constructor(
     private electronService: ElectronService,
@@ -53,10 +54,11 @@ export class AppComponent implements AfterViewInit {
       try {
         switch (message.type) {
           case 'start-spring-io-project-started':
-            this.downloadedProjectPath = '';
+            this.downloadedZipPath = '';
+            this.projectPath = '';
             break;
           case 'start-spring-io-project':
-            this.downloadedProjectPath = message.projectPath;
+            this.downloadedZipPath = message.projectPath;
             break;
         }
       } finally {
@@ -89,36 +91,10 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
-  openZip() {
-    if (this.downloadedProjectPath) {
-      shell.showItemInFolder(this.downloadedProjectPath);
-    }
-  }
-
-  openProjectInIntelliJ() {
-    if (this.downloadedProjectPath) {
-      let intellijPath = 'idea';
-      if (os.platform() === 'linux') {
-        intellijPath = `${os.homedir()}/.local/share/JetBrains/Toolbox/scripts/idea`
-      }
-      this.openProject(intellijPath);
-    }
-  }
-
-  openProjectInVSCode() {
-    if (this.downloadedProjectPath) {
-      let vscodePath = 'code';
-      if (os.platform() === 'linux') {
-        vscodePath = `/usr/bin/code`
-      }
-      this.openProject(vscodePath);
-    }
-  }
-
-  openProject(tool: string) {
-    if (this.downloadedProjectPath) {
-      const basename = path.basename(this.downloadedProjectPath);
-      const ext = path.extname(this.downloadedProjectPath);
+  extractZip() {
+    if (this.downloadedZipPath) {
+      const basename = path.basename(this.downloadedZipPath);
+      const ext = path.extname(this.downloadedZipPath);
       const projectName = basename.substring(0, basename.length - ext.length);
       ipcRenderer.send('select-project-parent-dir', {
         title: 'Open parent directory for Project',
@@ -129,12 +105,51 @@ export class AppComponent implements AfterViewInit {
         (async () => {
           if (!openDialogReturnValue.canceled) {
             const projectParentDir = openDialogReturnValue.filePaths[0];
-            await extract(this.downloadedProjectPath!, {dir: projectParentDir});
-            exec(`"${tool}" "${path.join(projectParentDir, projectName)}"`, (error) => {
-              console.error(error);
-            });
+            await extract(this.downloadedZipPath!, {dir: projectParentDir});
+            this.projectPath = path.join(projectParentDir, projectName);
+            this.changeDetectorRef.detectChanges();
           }
         })();
+      });
+    }
+  }
+
+  openZipLocation() {
+    if (this.downloadedZipPath) {
+      shell.showItemInFolder(this.downloadedZipPath);
+    }
+  }
+
+  openProjectLocation() {
+    if (this.projectPath) {
+      shell.showItemInFolder(this.projectPath);
+    }
+  }
+
+  openProjectInIntelliJ() {
+    if (this.projectPath) {
+      let intellijPath = 'idea';
+      if (os.platform() === 'linux') {
+        intellijPath = `${os.homedir()}/.local/share/JetBrains/Toolbox/scripts/idea`
+      }
+      this.openProject(intellijPath);
+    }
+  }
+
+  openProjectInVSCode() {
+    if (this.projectPath) {
+      let vscodePath = 'code';
+      if (os.platform() === 'linux') {
+        vscodePath = `/usr/bin/code`
+      }
+      this.openProject(vscodePath);
+    }
+  }
+
+  openProject(tool: string) {
+    if (this.projectPath) {
+      exec(`"${tool}" "${this.projectPath}"`, (error) => {
+        console.error(error);
       });
     }
   }

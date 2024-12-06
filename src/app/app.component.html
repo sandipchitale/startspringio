@@ -29,16 +29,24 @@
     <ng-template #start>
     </ng-template>
     <ng-template #center>
-      <div class="mr-2 font-bold">Downloaded project:</div>
-      <input readonly type="text" pInputText [(ngModel)]="downloadedProjectPath" class="no-drag mr-2 grow"/>
-      <button pButton [disabled]="!downloadedProjectPath" (click)="openZip()" class="no-drag mr-2" severity="secondary" title="Open in Explorer">
+      <div class="mr-2 font-bold">Downloaded project zip:</div>
+      <input readonly type="text" pInputText [(ngModel)]="downloadedZipPath" class="no-drag mr-2 grow"/>
+      <button pButton [disabled]="!downloadedZipPath" (click)="extractZip()" class="no-drag mr-2" severity="secondary" title="Extract zip">
+        <i class="pi pi-arrows-h"></i>
+      </button>
+      <button pButton [disabled]="!downloadedZipPath" (click)="openZipLocation()" class="no-drag mr-2" severity="secondary" title="Open zip location">
         <i class="pi pi-folder-open"></i>
       </button>
-      <button pButton [disabled]="!downloadedProjectPath" (click)="openProjectInIntelliJ()" class="no-drag mr-2" severity="secondary"
+      <div class="mr-2 font-bold">Project dir:</div>
+      <input readonly type="text" pInputText [(ngModel)]="projectPath" class="no-drag mr-2 grow"/>
+      <button pButton [disabled]="!projectPath" (click)="openProjectLocation()" class="no-drag mr-2" severity="secondary" title="Open Project Location">
+        <i class="pi pi-folder-open"></i>
+      </button>
+      <button pButton [disabled]="!projectPath" (click)="openProjectInIntelliJ()" class="no-drag mr-2" severity="secondary"
               title="Open project in IntelliJ">
         <img src="assets/icons/intellij.png" class="w-[16px]" alt="Open project in IntelliJ"/>
       </button>
-      <button pButton [disabled]="!downloadedProjectPath" (click)="openProjectInVSCode()" class="no-drag" severity="secondary"
+      <button pButton [disabled]="!projectPath" (click)="openProjectInVSCode()" class="no-drag" severity="secondary"
               title="Open project in VSCode">
         <img src="assets/icons/vscode.png" class="w-[16px]" alt="VSCode"/>
       </button>
