@@ -1,23 +1,17 @@
-<div class="drag w-screen h-screen p-4 grid grid-rows-[auto_1fr] gap-y-2 content-center">
-  <p-toolbar id="toolbar" class="drag">
+<div class="drag w-screen h-screen p-4 grid grid-rows-[auto_1fr_auto] gap-y-2 content-center">
+  <p-toolbar class="drag toolbar">
     <ng-template #start>
       <img src="assets/icons/springinitializr.svg" width="20"/>
       <span class="ml-4 font-bold text-2xl">Start Spring IO</span>
     </ng-template>
     <ng-template #center>
-      <input readonly type="text" pInputText [(ngModel)]="downloadedProjectPath" class="no-drag mr-2 grow"/>
-      <button pButton (click)="openProjectInIntelliJ()" class="no-drag ml-auto mr-2" severity="secondary" title="GitHub">
-        <img src="assets/icons/intellij.png" width="16"/>
-      </button>
-      <button pButton (click)="openProjectInVSCode()" class="no-drag ml-auto mr-2" severity="secondary" title="GitHub">
-        <img src="assets/icons/vscode.png" width="16"/>
-      </button>
     </ng-template>
     <ng-template #end>
       <button pButton (click)="gitHub()" class="no-drag ml-auto  mr-2" severity="secondary" title="GitHub"><i
         class="pi pi-github"></i></button>
       <button pButton (click)="startDotSpringDotIo()" class="no-drag mr-2" severity="secondary"
-              title="spring initializr"><img src="assets/icons/springinitializr.svg" width="16"/></button>
+              title="spring initializr"><img src="assets/icons/springinitializr.svg" width="16"
+                                             alt="spring initializr"/></button>
       <p-togglebutton class="no-drag mr-2"
                       [(ngModel)]="darkTheme"
                       [onLabel]="''"
@@ -31,4 +25,25 @@
   </p-toolbar>
   <webview id="start-spring-io" src="https://start.spring.io" class="no-drag border"
            partition="start-spring-io"></webview>
+  <p-toolbar class="drag toolbar">
+    <ng-template #start>
+    </ng-template>
+    <ng-template #center>
+      <div class="mr-2 font-bold">Downloaded project:</div>
+      <input readonly type="text" pInputText [(ngModel)]="downloadedProjectPath" class="no-drag mr-2 grow"/>
+      <button pButton [disabled]="!downloadedProjectPath" (click)="openZip()" class="no-drag mr-2" severity="secondary" title="Open in Explorer">
+        <i class="pi pi-folder-open"></i>
+      </button>
+      <button pButton [disabled]="!downloadedProjectPath" (click)="openProjectInIntelliJ()" class="no-drag mr-2" severity="secondary"
+              title="Open project in IntelliJ">
+        <img src="assets/icons/intellij.png" class="w-[16px]" alt="Open project in IntelliJ"/>
+      </button>
+      <button pButton [disabled]="!downloadedProjectPath" (click)="openProjectInVSCode()" class="no-drag" severity="secondary"
+              title="Open project in VSCode">
+        <img src="assets/icons/vscode.png" class="w-[16px]" alt="VSCode"/>
+      </button>
+    </ng-template>
+    <ng-template #end>
+    </ng-template>
+  </p-toolbar>
 </div>

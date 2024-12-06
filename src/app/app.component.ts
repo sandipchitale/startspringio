@@ -1,7 +1,8 @@
-import {ipcRenderer} from "electron";
+import {ipcRenderer, shell} from "electron";
 import * as path from 'path';
-import * as extract from 'extract-zip';
 import {exec} from 'child_process';
+import * as extract from 'extract-zip';
+import * as os from 'os';
 import {AfterViewInit, ChangeDetectorRef, Component, inject, NO_ERRORS_SCHEMA} from '@angular/core';
 import {DOCUMENT} from "@angular/common";
 import {FormsModule} from '@angular/forms';
@@ -14,7 +15,6 @@ import {InputTextModule} from 'primeng/inputtext';
 import {TabsModule} from 'primeng/tabs';
 import {ToggleButtonModule} from 'primeng/togglebutton';
 import {ToolbarModule} from 'primeng/toolbar';
-import {ExecException} from "node:child_process";
 
 @Component({
   selector: 'app-root',
@@ -65,6 +65,17 @@ export class AppComponent implements AfterViewInit {
     });
   }
 
+  ngAfterViewInit(): void {
+    // initial theme to match system theme
+    if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+      this.document.querySelector('html')?.classList.remove('dark-theme');
+      this.darkTheme = false;
+    } else {
+      this.document.querySelector('html')?.classList.add('dark-theme');
+      this.darkTheme = true;
+    }
+  }
+
   get darkTheme(): boolean {
     return this._darkTheme;
   }
@@ -78,22 +89,30 @@ export class AppComponent implements AfterViewInit {
     }
   }
 
-  ngAfterViewInit(): void {
-    if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-      this.document.querySelector('html')?.classList.remove('dark-theme');
-      this.darkTheme = false;
-    } else {
-      this.document.querySelector('html')?.classList.add('dark-theme');
-      this.darkTheme = true;
+  openZip() {
+    if (this.downloadedProjectPath) {
+      shell.showItemInFolder(this.downloadedProjectPath);
     }
   }
 
   async openProjectInIntelliJ() {
-    await this.openProject('/home/sandipchitale/.local/share/JetBrains/Toolbox/scripts/idea');
+    if (this.downloadedProjectPath) {
+      let intellijPath = 'idea';
+      if (os.platform() === 'linux') {
+        intellijPath = `${os.homedir()}/.local/share/JetBrains/Toolbox/scripts/idea`
+      }
+      await this.openProject(intellijPath);
+    }
   }
 
   async openProjectInVSCode() {
-    await this.openProject('code');
+    if (this.downloadedProjectPath) {
+      let vscodePath = 'code';
+      if (os.platform() === 'linux') {
+        vscodePath = `/usr/bin/code`
+      }
+      await this.openProject(vscodePath);
+    }
   }
 
   async openProject(tool: string) {
@@ -108,7 +127,7 @@ export class AppComponent implements AfterViewInit {
         exec(`"${tool}" "${projectDir}"`, (error) => {
           console.error(error);
         });
-      } catch(e) {
+      } catch (e) {
         console.error(e)
       }
     }
