@@ -15,7 +15,7 @@
     }
   ],
   "win": {
-    "icon": "dist/assets/icons",
+    "icon": "dist/assets/icons/favicon.256x256.png",
     "target": [
       "portable"
     ]
@@ -30,7 +30,7 @@
     ]
   },
   "linux": {
-    "icon": "dist/assets/icons",
+    "icon": "dist/assets/icons/favicon.256x256.png",
     "target": [
       "AppImage"
     ]
