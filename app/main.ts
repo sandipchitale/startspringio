@@ -18,7 +18,6 @@ function createWindow(): BrowserWindow {
     frame: false,
     roundedCorners: true,
     center: true,
-    resizable: false,
     webPreferences: {
       nodeIntegration: true,
       allowRunningInsecureContent: (serve),
@@ -34,6 +33,18 @@ function createWindow(): BrowserWindow {
       } catch (e) {
         console.error(e);
       }
+    }
+  });
+
+  ipcMain.on('minimize', () => {
+    win?.minimize();
+  });
+
+  ipcMain.on('toggle-restore-maximize', () => {
+    if (win?.isMaximized()) {
+      win?.restore();
+    } else {
+      win?.maximize();
     }
   });
 

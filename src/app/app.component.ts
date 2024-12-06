@@ -30,6 +30,7 @@ export class AppComponent implements AfterViewInit {
   private readonly document = inject(DOCUMENT);
 
   _darkTheme = false;
+  restoreMaximize = false;
 
   downloadedZipPath: string | null = null;
   projectPath: string | null = null;
@@ -202,6 +203,14 @@ export class AppComponent implements AfterViewInit {
 
   async startDotSpringDotIo() {
     await shell.openExternal('https://start.spring.io/');
+  }
+
+  toggleRestoreMaximize() {
+    ipcRenderer.send('toggle-restore-maximize');
+  }
+
+  minimize() {
+    ipcRenderer.send('minimize');
   }
 
   quit() {

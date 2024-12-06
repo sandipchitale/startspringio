@@ -7,11 +7,9 @@
     <ng-template #center>
     </ng-template>
     <ng-template #end>
-      <button pButton (click)="gitHub()" class="no-drag ml-auto  mr-2" severity="secondary" title="GitHub"><i
-        class="pi pi-github"></i></button>
+      <button pButton (click)="gitHub()" class="no-drag ml-auto  mr-2" severity="secondary" title="GitHub"><i class="pi pi-github"></i></button>
       <button pButton (click)="startDotSpringDotIo()" class="no-drag mr-2" severity="secondary"
-              title="spring initializr"><img src="assets/icons/springinitializr.svg" width="16"
-                                             alt="spring initializr"/></button>
+              title="spring initializr"><img src="assets/icons/springinitializr.svg" width="16" alt="spring initializr"/></button>
       <p-togglebutton class="no-drag mr-2"
                       [(ngModel)]="darkTheme"
                       [onLabel]="''"
@@ -19,12 +17,19 @@
                       [onIcon]="'pi pi-sun'"
                       [offIcon]="'pi pi-moon'">
       </p-togglebutton>
-      <button pButton class="no-drag" severity="success" (click)="quit()" title="Quit"><i class="pi pi-times"></i>
-      </button>
+      <button pButton class="no-drag mr-2" severity="secondary" (click)="minimize()" title="Minimize"><i class="pi pi-window-minimize"></i></button>
+      <p-togglebutton class="no-drag mr-2"
+                      [(ngModel)]="restoreMaximize"
+                      [onLabel]="''"
+                      [offLabel]="''"
+                      [onIcon]="'pi pi-stop'"
+                      [offIcon]="'pi pi-window-maximize'"
+                      (onChange)="toggleRestoreMaximize()">
+      </p-togglebutton>
+      <button pButton class="no-drag" severity="danger" (click)="quit()" title="Quit"><i class="pi pi-times"></i></button>
     </ng-template>
   </p-toolbar>
-  <webview id="start-spring-io" src="https://start.spring.io" class="no-drag border"
-           partition="persist:start-spring-io"></webview>
+  <webview id="start-spring-io" src="https://start.spring.io" class="no-drag border" partition="persist:start-spring-io"></webview>
   <p-toolbar class="drag toolbar">
     <ng-template #start>
     </ng-template>
