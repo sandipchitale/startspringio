@@ -2,3 +2,6 @@
 
 ![screenshot](screenshot/startspringio.png)
 
+## Bookmarks
+![screenshot](screenshot/startspringio-bookmarks.png)
+
