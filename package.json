@@ -38,6 +38,7 @@
     "electron:serve": "wait-on tcp:4200 && npm run electron:serve-tsc && electron . --serve",
     "electron:local": "npm run build:prod && electron .",
     "electron:local-inspect": "npm run build:prod && electron --inspect=9229 .",
+    "electron:local-inspect-brk": "npm run build:prod && electron --inspect-brk=9229 .",
     "electron:build": "npm run build:prod && electron-builder build --publish=never",
     "test": "ng test --watch=false",
     "test:watch": "ng test",

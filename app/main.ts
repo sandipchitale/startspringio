@@ -48,10 +48,10 @@ function createWindow(): BrowserWindow {
     }
   });
 
-  session.fromPartition('start-spring-io').setDownloadPath(`${os.tmpdir()}`);
+  session.fromPartition('persist:start-spring-io').setDownloadPath(`${os.tmpdir()}`);
 
   // https://start.spring.io/starter.zip?type=gradle-project&language=java&bootVersion=3.4.0&baseDir=demo&groupId=com.example&artifactId=demo&name=demo&description=Demo%20project%20for%20Spring%20Boot&packageName=com.example.demo&packaging=jar&javaVersion=17
-  session.fromPartition('start-spring-io').webRequest.onBeforeRequest({urls: ['*://*/*']}, (details: any, callback: any) => {
+  session.fromPartition('persist:start-spring-io').webRequest.onBeforeRequest({urls: ['*://*/*']}, (details: any, callback: any) => {
     if (details.url.startsWith('https://start.spring.io/starter.zip')) {
       win?.webContents.send('message-from-main', {
         type: 'start-spring-io-project-started',
@@ -62,13 +62,13 @@ function createWindow(): BrowserWindow {
   });
 
   let downloadUrl: string | null = null;
-  session.fromPartition('start-spring-io').webRequest.onCompleted({urls: ['*://*/*']}, (details: any) => {
+  session.fromPartition('persist:start-spring-io').webRequest.onCompleted({urls: ['*://*/*']}, (details: any) => {
     if (details.url.startsWith('https://start.spring.io/starter.zip')) {
       downloadUrl = details.url;
     }
   });
 
-  session.fromPartition('start-spring-io').on('will-download', (event, item, webContents) => {
+  session.fromPartition('persist:start-spring-io').on('will-download', (event, item, webContents) => {
     item.once('done', (event, state) => {
       if (state === 'completed') {
         console.log(`Download url: ${downloadUrl}`);
