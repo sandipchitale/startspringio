@@ -112,14 +112,17 @@ export class AppComponent implements AfterViewInit {
         properties: ['openDirectory'],
       });
       ipcRenderer.on('project-parent-dir', (_, openDialogReturnValue: OpenDialogReturnValue) => {
-        (async () => {
-          if (!openDialogReturnValue.canceled) {
-            const projectParentDir = openDialogReturnValue.filePaths[0];
-            await extract(this.downloadedZipPath!, {dir: projectParentDir});
+        if (!openDialogReturnValue.canceled) {
+          const projectParentDir = openDialogReturnValue.filePaths[0];
+          extract(this.downloadedZipPath!, {dir: projectParentDir}).then(() => {
             this.projectPath = path.join(projectParentDir, projectName);
             this.changeDetectorRef.detectChanges();
-          }
-        })();
+          }).catch((err) => {
+            if (err) {
+              console.error(err);
+            }
+          });
+        }
       });
     }
   }
