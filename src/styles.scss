@@ -33,3 +33,7 @@ body {
 .toolbar .p-toolbar-center {
   flex: 1 1 auto !important;
 }
+
+.toolbar .p-togglebutton-label {
+  display: none;
+}
